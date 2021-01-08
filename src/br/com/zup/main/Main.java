@@ -1,9 +1,10 @@
 package br.com.zup.main;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
-import br.com.zup.pojo.Cliente;
+import br.com.zup.DAO.ClientDAO;
+import br.com.zup.pojo.Client;
 
 public class Main {
 
@@ -13,145 +14,140 @@ public class Main {
             + "3 - Listar todos os Clientes\n" + "4 - Atualizar dados do Cliente\n"
             + "5 - Deletar Cadastro\n" + "0 - Encerrar Programa\n";
 
-    public static void cadastraCliente(Scanner input, List<Cliente> clientes) {
+    public static void signUpClient(Scanner input) throws SQLException {
 
         System.out.println("Nome: ");
-        String nome = input.next();
+        String name = input.next();
         System.out.println("CPF: ");
         Long cpf = input.nextLong();
         System.out.println("Idade: ");
-        Byte idade = input.nextByte();
+        Byte age = input.nextByte();
         System.out.println("Emai: ");
         String email = input.next();
         System.out.println("Telefone para contato: ");
-        Long telefone = input.nextLong();
+        Long phoneNumber = input.nextLong();
         System.out.println("Endereço: ");
-        String endereco = input.next();
+        String address = input.next();
 
-        Cliente cliente = new Cliente();
+        Client cliente = new Client();
 
-        cliente.setNome(nome);
+        cliente.setName(name);
         cliente.setCpf(cpf);
-        cliente.setIdade(idade);
+        cliente.setAge(age);
         cliente.setEmail(email);
-        cliente.setTelefone(telefone);
-        cliente.setEndereco(endereco);
-        
-        clientes.add(cliente);
+        cliente.setPhoneNumber(phoneNumber);
+        cliente.setAddress(address);
 
-        System.out.println("O cliente " + cliente.getNome() + " cadastrado com sucesso!\n");
+        ClientDAO method = new ClientDAO();
+        method.signUpClient(cliente);
+
+        System.out.println("O cliente " + cliente.getName() + " cadastrado com sucesso!\n");
     }
 
-    public static void listaClientePeloCpf(Scanner input, List<Cliente> clientes) {
+    public static void listClientByCpf(Scanner input) throws SQLException {
         System.out.println("Digite o CPF do cliente: ");
         Long cpf = input.nextLong();
 
-        for(Cliente cliente : clientes) {
-            if (cliente.getCpf().equals(cpf)) {
-                System.out.println(cliente.toString());
-            }
-        }
+        ClientDAO clientDB = new ClientDAO();
+        Client clientReturned = clientDB.listClientByCpf(cpf);
+
+        System.out.println(clientReturned.toString());
     }
 
-    public static void listaClientes(List<Cliente> clientes) {
+    public static void listAllClients() throws SQLException {
+        ClientDAO clientsDB = new ClientDAO();
+        List<Client> resultList = clientsDB.listAllClients();
 
         System.out.println("-----------------------------------------\n"
                 + "           LISTA DE CLIENTES             \n"
                 + "-----------------------------------------\n");
 
-        for (Cliente cliente : clientes) {
-            System.out.println(cliente.toString());
+        for (Client client : resultList) {
+            System.out.println(client.toString());
         }
     }
 
-    public static void atualizaDadosDoCliente(Scanner input, List<Cliente> clientes) {
+    public static void updateClient(Scanner input) throws SQLException {
         System.out.println("Digite o CPF do cliente: ");
         Long cpf = input.nextLong();
         
-        for(Cliente cliente : clientes) {
-            if (cliente.getCpf().equals(cpf)) {
-                System.out.println(
-                        "Seguem os dados q podem ser atualizados, se não desejar atualizar,\n"
-                        + "apenas preencha com o valor que ja existe!\n");
-                System.out.println("Nome: ");
-                String nome = input.next();
-                System.out.println("Idade: ");
-                Byte idade = input.nextByte();
-                System.out.println("Emai: ");
-                String email = input.next();
-                System.out.println("Telefone para contato: ");
-                Long telefone = input.nextLong();
-                System.out.println("Endereço: ");
-                String endereco = input.next();
+        System.out.println(
+                "Seguem os dados q podem ser atualizados, se não desejar atualizar,\n"
+                + "apenas preencha com o valor que ja existe!\n");
+        System.out.println("Nome: ");
+        String name = input.next();
+        System.out.println("Idade: ");
+        Byte age = input.nextByte();
+        System.out.println("Emai: ");
+        String email = input.next();
+        System.out.println("Telefone para contato: ");
+        Long phoneNumber = input.nextLong();
+        System.out.println("Endereço: ");
+        String address = input.next();
 
-                cliente.setNome(nome);
-                cliente.setIdade(idade);
-                cliente.setEmail(email);
-                cliente.setTelefone(telefone);
-                cliente.setEndereco(endereco);
-            }
-        }
+        Client cliente = new Client();
+
+        cliente.setName(name);
+        cliente.setAge(age);
+        cliente.setEmail(email);
+        cliente.setPhoneNumber(phoneNumber);
+        cliente.setAddress(address);
+        
+        ClientDAO metodo = new ClientDAO();
+        metodo.updateClient(cliente, cpf);
         
         System.out.println("O cliente foi atualizado com sucesso");
     }
 
-    public static void deletaCliente(Scanner input, List<Cliente> clientes) {
+    public static void deleteClient(Scanner input) {
         System.out.println("Digite o CPF do cliente: ");
         Long cpf = input.nextLong();
 
-        
-        for (int i = 0; i < clientes.size(); i++) {
-            if (clientes.get(i).getCpf().equals(cpf)) {
-                clientes.remove(i);
-            }
-        }
+        ClientDAO clienteDB = new ClientDAO();
+        clienteDB.deleteClient(cpf);
 
         System.out.println("O cliente foi removido com sucesso");
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
         Scanner input = new Scanner(System.in);
-        List<Cliente> clientesSalvos = new ArrayList<Cliente>();
-        
-        String escolha = null;
+        String key = null;
         do {
             
         System.out.println(MENU);
-        escolha = input.next();
+        key = input.next();
 
-        switch (escolha) {
+        switch (key) {
             case "1":
-                cadastraCliente(input, clientesSalvos);
+                signUpClient(input);
                 break;
 
             case "2":
-                listaClientePeloCpf(input, clientesSalvos);
+                listClientByCpf(input);
                 break;
 
             case "3":
-                listaClientes(clientesSalvos);
+                listAllClients();
                 break;
 
             case "4":
-                atualizaDadosDoCliente(input, clientesSalvos);
+                updateClient(input);
                 break;
 
             case "5":
-                deletaCliente(input, clientesSalvos);
+                deleteClient(input);
                 break;
 
             case "0":
-                System.out.println("O programa foi encerrado");
                 break;
 
             default:
                 System.out.println("Opção Inválida, tente novamente...");
                 break;
         }
-        } while (!escolha.equals("0"));
+        } while (!key.equals("0"));
 
         input.close();
     }
-
 }
