@@ -33,8 +33,6 @@ public class Client {
     private String address;
 
 
-    //Getter and Setters
-
     public String getName() {
         return name;
     }

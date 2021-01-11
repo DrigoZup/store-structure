@@ -15,9 +15,6 @@ public class ClientDto {
     private String address;
 
     
-    //Getters and Setters
-    
-    
     public String getName() {
         return name;
     }

@@ -13,9 +13,6 @@ public class UpdateClientDto {
     private String address;
 
     
-    //Getters and Setters
-    
-    
     public String getName() {
         return name;
     }
